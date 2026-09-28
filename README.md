@@ -13,9 +13,9 @@ Le script SQL permet de mettre en place la BDD, le fichier contient aussi un jeu
   (login, mot de passe, nom de la table, IP serveur si vous en avez une sinon localhost)
 ! FIN IMPORTANT !
 
-index.php -> Point d'entré
-vue -> permet d'avoir un affichage pour chaque interaction avec la BDD
-modele/Connexion.php -> permet la connexion à la BDD
-Core/ et Core/Dao -> sert principalement créer les objets en POO et à communiquer avec la BDD pour les données demandées
-controleur -> permet de relier le Core avec les bonnes vues
+index.php -> Point d'entré.
+vue -> permet d'avoir un affichage pour chaque interaction avec la BDD.
+modele/Connexion.php -> permet la connexion à la BDD.
+Core/ et Core/Dao -> sert principalement créer les objets en POO et à communiquer avec la BDD pour les données demandées.
+controleur -> permet de relier le Core avec les bonnes vues.
 
