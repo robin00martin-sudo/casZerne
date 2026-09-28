@@ -1,5 +1,5 @@
 # casZerne
-Permet la gestion complète d'une caserne de pompiers de volontaires.
+Permet la gestion complète d'une caserne de pompiers volontaires.
   
   Permet la crétion de pompiers volontaires
   Permet la lecture des pompiers actif ou non
