@@ -15,8 +15,14 @@ Class Caserne{
         $this->lesPompiers = new CollectionPompier($capacite);
     }
     
-    public function Appeler(string $numeroBip): void {
-        // à simuler
+    /** Simule l'appel d'un pompier par son bip : true si le numéro correspond à un pompier de la caserne. */
+    public function Appeler(string $numeroBip): bool {
+        for ($i = 0; $i < $this->lesPompiers->Cardinal(); $i++) {
+            if ($this->lesPompiers->Extraire($i)->getNumeroBip() === $numeroBip) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public function AppelEquipe(Periode $unePeriode, int $nbPompiers): int {
