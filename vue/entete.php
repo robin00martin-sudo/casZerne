@@ -22,7 +22,7 @@
     <nav>
         <?php
             $action = $_GET['action'] ?? 'defaut';
-            $navPompiers = in_array($action, ['defaut','listePompiers','ajouterPompier','detailPompier','supprimerPompier']);
+            $navPompiers = in_array($action, ['defaut','listePompiers','ajouterPompier','detailPompier','modifierPompier','supprimerPompier']);
             $navPeriodes = in_array($action, ['listePeriodes','ajouterPeriode','detailPeriode','supprimerPeriode','ajouterActivite','supprimerActivite']);
         ?>
         <a href="index.php?action=listePompiers" <?= $navPompiers ? 'class="active"' : '' ?>>
@@ -42,6 +42,9 @@
                 </a>
             </div>
         </div>
+        <?php if (estAdmin()): ?>
+            <a href="index.php?action=deconnexion">🔒 Déconnexion</a>
+        <?php endif; ?>
     </nav>
 </header>
 

@@ -44,11 +44,13 @@
                         <div class="actions-cell">
                             <a href="index.php?action=detailPompier&bip=<?= urlencode($p->getNumeroBip()) ?>"
                                class="btn btn-acier btn-sm">Détail</a>
-                            <a href="index.php?action=supprimerPompier&bip=<?= urlencode($p->getNumeroBip()) ?>"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Supprimer le pompier <?= htmlspecialchars($p->getPrenomPompier().' '.$p->getNomPompier()) ?> ?')">
-                                Supprimer
-                            </a>
+                            <a href="index.php?action=modifierPompier&bip=<?= urlencode($p->getNumeroBip()) ?>"
+                               class="btn btn-acier btn-sm">Modifier</a>
+                            <form method="POST" action="index.php?action=supprimerPompier" style="display:inline" onsubmit="return confirm('Supprimer le pompier <?= htmlspecialchars(addslashes($p->getPrenomPompier().' '.$p->getNomPompier())) ?> ?');">
+                            <?= csrfChamp() ?>
+                            <input type="hidden" name="bip" value="<?= htmlspecialchars($p->getNumeroBip()) ?>">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
                         </div>
                     </td>
                 </tr>

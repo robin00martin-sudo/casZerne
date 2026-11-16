@@ -5,7 +5,7 @@
         <?php if ($periode): ?>
             <span class="badge">
                 <?= htmlspecialchars($periode['libelleTranche']) ?>
-                &bull; <?= substr($periode['heureDebut'],0,5) ?> → <?= substr($periode['heureFin'],0,5) ?>
+                &bull; <?= substr($periode['heureDebut'],0,5) ?> → <?= substr($periode['heureFin'],0,5) ?><?= $periode['heureFin'] <= $periode['heureDebut'] ? ' (lendemain)' : '' ?>
             </span>
         <?php endif; ?>
     </div>
@@ -88,11 +88,30 @@
                         </td>
                         <td class="mono"><?= (int)$a['nbGardes'] ?></td>
                         <td>
-                            <a href="index.php?action=supprimerActivite&idVolontaire=<?= $a['idVolontaire'] ?>&idTranche=<?= $idTranche ?>&datePeriode=<?= urlencode($date) ?>"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Retirer <?= htmlspecialchars($a['prenom'].' '.strtoupper($a['nom'])) ?> de cette période ?')">
-                                Retirer
-                            </a>
+                            <div class="actions-cell">
+                                <form method="POST" action="index.php?action=ajouterActivite" class="inline-edit">
+                                    <?= csrfChamp() ?>
+                                    <input type="hidden" name="idTranche"    value="<?= (int) $idTranche ?>">
+                                    <input type="hidden" name="datePeriode"  value="<?= htmlspecialchars($date) ?>">
+                                    <input type="hidden" name="idVolontaire" value="<?= (int) $a['idVolontaire'] ?>">
+                                    <select name="idDisponibilite" aria-label="Disponibilité">
+                                        <?php foreach ($disponibilites as $d): ?>
+                                            <option value="<?= (int) $d['idDisponibilite'] ?>" <?= $d['idDisponibilite'] == $a['idDisponibilite'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($d['libelle']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <label class="mini-check"><input type="checkbox" name="deGarde" value="1" <?= $a['deGarde'] ? 'checked' : '' ?>> garde</label>
+                                    <button type="submit" class="btn btn-acier btn-sm">Modifier</button>
+                                </form>
+                                <form method="POST" action="index.php?action=supprimerActivite" onsubmit="return confirm('Retirer <?= htmlspecialchars(addslashes($a['prenom'].' '.strtoupper($a['nom']))) ?> de cette période ?');">
+                                    <?= csrfChamp() ?>
+                                    <input type="hidden" name="idVolontaire" value="<?= (int) $a['idVolontaire'] ?>">
+                                    <input type="hidden" name="idTranche"    value="<?= (int) $idTranche ?>">
+                                    <input type="hidden" name="datePeriode"  value="<?= htmlspecialchars($date) ?>">
+                                    <button type="submit" class="btn btn-danger btn-sm">Retirer</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -122,6 +141,7 @@
     <?php else: ?>
         <div class="form-card">
             <form method="POST" action="index.php?action=ajouterActivite">
+                <?= csrfChamp() ?>
                 <input type="hidden" name="idTranche"   value="<?= $idTranche ?>">
                 <input type="hidden" name="datePeriode" value="<?= htmlspecialchars($date) ?>">
 
@@ -169,6 +189,9 @@
 <?php endif; ?>
 
 <style>
+.inline-edit{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.inline-edit select{background:var(--charbon);border:1px solid var(--gris);color:var(--blanc);font-size:.75rem;padding:.3rem .4rem}
+.mini-check{font-size:.75rem;color:var(--clair);display:flex;gap:.25rem;align-items:center}
 .section-title {
     font-family: 'Oswald', sans-serif;
     font-size: 1rem;

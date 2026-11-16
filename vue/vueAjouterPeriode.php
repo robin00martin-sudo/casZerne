@@ -13,6 +13,7 @@
 
 <div class="form-card">
     <form method="POST" action="index.php?action=ajouterPeriode">
+        <?= csrfChamp() ?>
 
         <div class="form-group">
             <label for="datePeriode">Date de la garde</label>
@@ -32,13 +33,14 @@
                     </option>
                 <?php endforeach; ?>
             </select>
+            <div class="form-hint">Une tranche « Nuit » commence le soir de la date choisie et se termine le lendemain matin.</div>
         </div>
 
         <div class="form-group">
             <label for="nbPompiers">Nombre de pompiers requis</label>
             <input type="number" id="nbPompiers" name="nbPompiers" min="1" max="50" required
                    value="<?= htmlspecialchars($_POST['nbPompiers'] ?? '2') ?>">
-            <div class="form-hint">Nombre minimum de pompiers nécessaires pour cette garde</div>
+            <div class="form-hint">Nombre minimum de pompiers nécessaires pour cette garde (1 à 50)</div>
         </div>
 
         <div style="display:flex; gap:1rem; margin-top:1.5rem;">

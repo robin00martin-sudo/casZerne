@@ -15,6 +15,7 @@
 
 <div class="form-card">
     <form method="POST" action="index.php?action=ajouterPompier">
+        <?= csrfChamp() ?>
 
         <div class="form-group">
             <label for="nom">Nom</label>

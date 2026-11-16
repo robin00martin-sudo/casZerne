@@ -36,8 +36,8 @@
                 <?php foreach ($periodes as $p): ?>
                 <tr>
                     <td class="mono"><?= htmlspecialchars(date('d/m/Y', strtotime($p['datePeriode']))) ?></td>
-                    <td><?= htmlspecialchars($p['libelleTrache']) ?></td>
-                    <td class="mono"><?= substr($p['heureDebut'],0,5) ?> → <?= substr($p['heureFin'],0,5) ?></td>
+                    <td><?= htmlspecialchars($p['libelleTranche']) ?></td>
+                    <td class="mono"><?= substr($p['heureDebut'],0,5) ?> → <?= substr($p['heureFin'],0,5) ?><?= $p['heureFin'] <= $p['heureDebut'] ? ' (lendemain)' : '' ?></td>
                     <td>
                         <span class="badge-bip"><?= (int)$p['nbPompiers'] ?></span>
                     </td>
@@ -45,11 +45,12 @@
                         <div class="actions-cell">
                             <a href="index.php?action=detailPeriode&idTranche=<?= $p['idTranche'] ?>&datePeriode=<?= urlencode($p['datePeriode']) ?>"
                                class="btn btn-acier btn-sm">Activités</a>
-                            <a href="index.php?action=supprimerPeriode&idTranche=<?= $p['idTranche'] ?>&datePeriode=<?= urlencode($p['datePeriode']) ?>"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Supprimer cette période et toutes ses activités ?')">
-                                Supprimer
-                            </a>
+                            <form method="POST" action="index.php?action=supprimerPeriode" style="display:inline" onsubmit="return confirm('Supprimer cette période et toutes ses activités ?');">
+                            <?= csrfChamp() ?>
+                            <input type="hidden" name="idTranche" value="<?= (int) $p['idTranche'] ?>">
+                            <input type="hidden" name="datePeriode" value="<?= htmlspecialchars($p['datePeriode']) ?>">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
                         </div>
                     </td>
                 </tr>
