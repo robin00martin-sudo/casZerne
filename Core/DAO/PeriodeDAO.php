@@ -20,7 +20,7 @@ class PeriodeDAO {
     // ── READ TOUS ─────────────────────────────────────────────
     public function getTous(): array {
         $sql  = "SELECT pg.idTranche, pg.datePeriode, pg.nbPompiers,
-                        t.libelle AS libelleTrache, t.heureDebut, t.heureFin
+                        t.libelle AS libelleTranche, t.heureDebut, t.heureFin
                  FROM   PERIODE_GARDE pg
                  JOIN   TRANCHE t ON t.idTranche = pg.idTranche
                  ORDER  BY pg.datePeriode DESC, pg.idTranche";
@@ -47,10 +47,29 @@ class PeriodeDAO {
     }
 
     // ── DELETE ────────────────────────────────────────────────
+    /**
+     * Supprime la période et, par cascade SQL, ses activités. Les compteurs nbGardes
+     * des volontaires « de garde » sur cette période sont d'abord décrémentés.
+     */
     public function supprimer(int $idTranche, string $datePeriode): void {
-        $sql  = "DELETE FROM PERIODE_GARDE WHERE idTranche = ? AND datePeriode = ?";
-        $stmt = $this->connexion->prepare($sql);
-        $stmt->execute([$idTranche, $datePeriode]);
+        $this->connexion->beginTransaction();
+        try {
+            $this->connexion->prepare(
+                "UPDATE VOLONTAIRE v
+                 JOIN   AVOIR_ACTIVITE aa ON aa.idVolontaire = v.idVolontaire
+                 SET    v.nbGardes = GREATEST(0, v.nbGardes - 1)
+                 WHERE  aa.idTranche = ? AND aa.datePeriode = ? AND aa.deGarde = 1")
+                ->execute([$idTranche, $datePeriode]);
+
+            $this->connexion->prepare(
+                "DELETE FROM PERIODE_GARDE WHERE idTranche = ? AND datePeriode = ?")
+                ->execute([$idTranche, $datePeriode]);
+
+            $this->connexion->commit();
+        } catch (Throwable $e) {
+            if ($this->connexion->inTransaction()) $this->connexion->rollBack();
+            throw $e;
+        }
     }
 
     // ── EXISTENCE ─────────────────────────────────────────────
