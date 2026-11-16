@@ -5,6 +5,13 @@ CREATE DATABASE IF NOT EXISTS CasZerne
 
 USE CasZerne;
 
+-- Script rejouable : on repart d'un schéma vierge (ordre inverse des clés étrangères)
+DROP TABLE IF EXISTS AVOIR_ACTIVITE;
+DROP TABLE IF EXISTS PERIODE_GARDE;
+DROP TABLE IF EXISTS VOLONTAIRE;
+DROP TABLE IF EXISTS DISPONIBILITE;
+DROP TABLE IF EXISTS TRANCHE;
+
 
 CREATE TABLE TRANCHE (
     idTranche   INT          NOT NULL AUTO_INCREMENT,
@@ -38,7 +45,7 @@ CREATE TABLE VOLONTAIRE (
 CREATE TABLE PERIODE_GARDE (
     idTranche   INT  NOT NULL COMMENT 'FK → TRANCHE',
     datePeriode DATE NOT NULL COMMENT 'Date de la période de garde',
-    nbPompiers  INT  NOT NULL DEFAULT 0 COMMENT 'Nombre de pompiers affectés à cette période',
+    nbPompiers  INT  NOT NULL DEFAULT 0 COMMENT 'Nombre de pompiers requis pour cette période',
     PRIMARY KEY (idTranche, datePeriode),
     CONSTRAINT fk_pg_tranche FOREIGN KEY (idTranche) REFERENCES TRANCHE(idTranche)
         ON UPDATE CASCADE ON DELETE RESTRICT

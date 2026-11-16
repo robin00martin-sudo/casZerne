@@ -1,32 +1,25 @@
 # casZerne
-Permet la gestion complète d'une caserne de pompiers volontaires.
-  
-  Permet la crétion de pompiers volontaires
-  
-  Permet la lecture des pompiers actif ou non
-  
-  Permet la modification des pompiers existant ainsi que leur activité
-  
-  Permet la suppresion de pompiers volontaire
+Gestion complète d'une caserne de pompiers volontaires (PHP orienté objet, MVC, DAO).
 
+- Création, lecture, **modification** et suppression des pompiers volontaires (numéro de BIP unique).
+- Planification de **périodes de garde** (date + tranche Matin / Après-midi / Nuit + effectif requis).
+- Affectation d'une **disponibilité** (Disponible, Missionné, Absent) à chaque volontaire pour une période, **modification** et retrait ; compteur de gardes exact (`nbGardes`).
+- Fiche pompier avec son compteur de gardes et l'historique de ses activités.
 
+## Installation
+1. Importer `caszerne.sql` (script rejouable : crée la base `CasZerne`, les tables et un jeu de test).
+2. Copier `config.example.php` en `config.local.php` (ignoré par Git) et renseigner la connexion MySQL
+   (ou variables d'environnement `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`).
+3. **Accès protégé** : générer le hash du mot de passe administrateur et le placer dans `admin_hash` :
+   `php -r "echo password_hash('votre_mot_de_passe', PASSWORD_DEFAULT);"`. Sans ce hash, l'application reste verrouillée.
 
-Le script SQL permet de mettre en place la BDD, le fichier contient aussi un jeu de test.
+## Sécurité
+Requêtes préparées, sorties échappées, jeton anti-CSRF sur tous les formulaires, suppressions en POST uniquement,
+`session_regenerate_id()` à la connexion, erreurs techniques journalisées (jamais affichées), validation serveur des dates et des effectifs.
 
-! IMPORTANT !
-  Une fois la BDD initialiser dans "modele/Connexion.php" veuillez renseigner vos info pour vous connecter à la BDD
-  (login, mot de passe, nom de la table, IP serveur si vous en avez une sinon localhost)
-! FIN IMPORTANT !
-
-
-
-index.php -> Point d'entré.
-
-vue -> permet d'avoir un affichage pour chaque interaction avec la BDD.
-
-modele/Connexion.php -> permet la connexion à la BDD.
-
-Core/ et Core/Dao -> sert principalement créer les objets en POO et à communiquer avec la BDD pour les données demandées.
-
-controleur -> permet de relier le Core avec les bonnes vues.
-
+## Organisation
+- `index.php` : point d'entrée (session, CSRF, contrôle d'accès, routage `?action=`).
+- `modele/Connexion.php` : connexion PDO (singleton) et configuration.
+- `Core/` et `Core/DAO/` : objets métier POO et accès à la base.
+- `controleur/` : relie le Core aux vues (un fichier par action ; `csrf.php`, `auth.php`, `outils.php`).
+- `vue/` : affichage.
