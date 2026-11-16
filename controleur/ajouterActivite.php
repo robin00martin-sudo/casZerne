@@ -3,24 +3,28 @@ require_once RACINE . '/Core/Pompier.php';
 require_once RACINE . '/Core/CollectionPompier.php';
 require_once RACINE . '/Core/DAO/ActiviteDAO.php';
 require_once RACINE . '/Core/DAO/PompierDAO.php';
+require_once RACINE . '/controleur/outils.php';
 
-$idTranche  = (int)($_POST['idTranche']     ?? 0);
-$date       = trim($_POST['datePeriode']    ?? '');
-$idVolont   = (int)($_POST['idVolontaire']  ?? 0);
-$idDispo    = (int)($_POST['idDisponibilite'] ?? 0);
-$deGarde    = isset($_POST['deGarde']) ? 1 : 0;
+exigerPost('listePeriodes');
 
-if ($idTranche > 0 && !empty($date) && $idVolont > 0 && $idDispo > 0) {
+$idTranche = (int) ($_POST['idTranche']       ?? 0);
+$date      = trim($_POST['datePeriode']       ?? '');
+$idVolont  = (int) ($_POST['idVolontaire']    ?? 0);
+$idDispo   = (int) ($_POST['idDisponibilite'] ?? 0);
+$deGarde   = isset($_POST['deGarde']) ? 1 : 0;
+
+if ($idTranche > 0 && dateValide($date) && $idVolont > 0 && $idDispo > 0) {
     try {
-        $dao = new ActiviteDAO();
-        $dao->enregistrerActivite($idVolont, $idTranche, $date, $idDispo, $deGarde);
-        $_SESSION['message'] = "Pompier affecté à la période avec succès.";
+        // Création ou mise à jour (modification de la disponibilité / de la garde)
+        (new ActiviteDAO())->enregistrerActivite($idVolont, $idTranche, $date, $idDispo, $deGarde);
+        $_SESSION['message'] = "Activité enregistrée avec succès.";
     } catch (Exception $e) {
-        $_SESSION['message'] = "Erreur lors de l'affectation : " . $e->getMessage();
+        // violation de clé étrangère : volontaire, période ou disponibilité inexistants
+        $_SESSION['message'] = erreurTechnique($e, "Erreur lors de l'enregistrement : vérifiez les données saisies.");
     }
 } else {
-    $_SESSION['message'] = "Données incomplètes, affectation annulée.";
+    $_SESSION['message'] = "Données incomplètes, enregistrement annulé.";
 }
 
-header("Location: index.php?action=detailPeriode&idTranche=$idTranche&datePeriode=$date");
+header('Location: index.php?action=detailPeriode&idTranche=' . $idTranche . '&datePeriode=' . urlencode($date));
 exit();

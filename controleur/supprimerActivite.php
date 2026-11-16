@@ -1,19 +1,21 @@
 <?php
 require_once RACINE . '/Core/DAO/ActiviteDAO.php';
+require_once RACINE . '/controleur/outils.php';
 
-$idVolont  = (int)($_GET['idVolontaire'] ?? 0);
-$idTranche = (int)($_GET['idTranche']   ?? 0);
-$date      = $_GET['datePeriode']       ?? '';
+exigerPost('listePeriodes');
 
-if ($idVolont > 0 && $idTranche > 0 && !empty($date)) {
+$idVolont  = (int) ($_POST['idVolontaire'] ?? 0);
+$idTranche = (int) ($_POST['idTranche']    ?? 0);
+$date      = $_POST['datePeriode']         ?? '';
+
+if ($idVolont > 0 && $idTranche > 0 && dateValide($date)) {
     try {
-        $dao = new ActiviteDAO();
-        $dao->supprimerActivite($idVolont, $idTranche, $date);
+        (new ActiviteDAO())->supprimerActivite($idVolont, $idTranche, $date);
         $_SESSION['message'] = "Activité retirée.";
     } catch (Exception $e) {
-        $_SESSION['message'] = "Erreur lors de la suppression.";
+        $_SESSION['message'] = erreurTechnique($e, "Erreur lors de la suppression.");
     }
 }
 
-header("Location: index.php?action=detailPeriode&idTranche=$idTranche&datePeriode=$date");
+header('Location: index.php?action=detailPeriode&idTranche=' . $idTranche . '&datePeriode=' . urlencode($date));
 exit();

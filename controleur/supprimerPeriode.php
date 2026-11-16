@@ -1,17 +1,19 @@
 <?php
 require_once RACINE . '/Core/Periode.php';
 require_once RACINE . '/Core/DAO/PeriodeDAO.php';
+require_once RACINE . '/controleur/outils.php';
 
-$idTranche  = (int)($_GET['idTranche']   ?? 0);
-$date       = $_GET['datePeriode'] ?? '';
+exigerPost('listePeriodes');
 
-if ($idTranche > 0 && !empty($date)) {
+$idTranche = (int) ($_POST['idTranche'] ?? 0);
+$date      = $_POST['datePeriode'] ?? '';
+
+if ($idTranche > 0 && dateValide($date)) {
     try {
-        $dao = new PeriodeDAO();
-        $dao->supprimer($idTranche, $date);
+        (new PeriodeDAO())->supprimer($idTranche, $date);
         $_SESSION['message'] = "Période du $date supprimée.";
     } catch (Exception $e) {
-        $_SESSION['message'] = "Erreur lors de la suppression.";
+        $_SESSION['message'] = erreurTechnique($e, "Erreur lors de la suppression.");
     }
 }
 

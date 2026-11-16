@@ -5,13 +5,14 @@ require_once RACINE . '/Core/CollectionPompier.php';
 require_once RACINE . '/Core/DAO/PeriodeDAO.php';
 require_once RACINE . '/Core/DAO/ActiviteDAO.php';
 require_once RACINE . '/Core/DAO/PompierDAO.php';
+require_once RACINE . '/controleur/outils.php';
 
-$idTranche = (int)($_GET['idTranche']   ?? 0);
-$date      = $_GET['datePeriode']       ?? '';
-$message   = $_SESSION['message']       ?? null;
+$idTranche = (int) ($_GET['idTranche'] ?? 0);
+$date      = $_GET['datePeriode'] ?? '';
+$message   = $_SESSION['message'] ?? null;
 unset($_SESSION['message']);
 
-if ($idTranche <= 0 || empty($date)) {
+if ($idTranche <= 0 || !dateValide($date)) {
     header('Location: index.php?action=listePeriodes');
     exit();
 }
@@ -26,14 +27,13 @@ try {
     $disponibilites     = $activiteDAO->getDisponibilites();
     $tousPompiersAvecId = $pompierDAO->getPompiersAvecId();
 
-    // IDs déjà affectés à cette période
     $idDejaAffa = array_column($activites, 'idVolontaire');
-
     $erreur = $periode ? null : "Période introuvable.";
+
 } catch (Exception $e) {
     $periode = null;
     $activites = $disponibilites = $tousPompiersAvecId = $idDejaAffa = [];
-    $erreur = "Erreur : " . $e->getMessage();
+    $erreur = erreurTechnique($e, "Erreur lors du chargement de la période.");
 }
 
 require_once RACINE . '/vue/entete.php';

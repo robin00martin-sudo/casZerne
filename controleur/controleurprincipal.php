@@ -1,12 +1,16 @@
 <?php
 function controleurPrincipal(string $action): string {
     $lesActions = [
+        // Accès
+        'connexion'         => 'connexion.php',
+        'deconnexion'       => 'deconnexion.php',
         // Pompiers
         'defaut'            => 'listePompiers.php',
         'listePompiers'     => 'listePompiers.php',
         'ajouterPompier'    => 'ajouterPompier.php',
         'supprimerPompier'  => 'supprimerPompier.php',
         'detailPompier'     => 'detailPompier.php',
+        'modifierPompier'   => 'modifierPompier.php',
         // Périodes
         'listePeriodes'     => 'listePeriodes.php',
         'ajouterPeriode'    => 'ajouterPeriode.php',
